@@ -1,0 +1,38 @@
+/** Stack abstract data type */
+public class Stack<T> {
+  /** List objects to hold our stack items.
+      Use List operations to implement the methods below */
+  private List<T> list;
+
+  public Stack() {
+    // instantiate list here
+    list = new List<T>();
+  }
+  
+  /** push adds in a value to the list */
+  public void push(T value) {
+      list.prepend(value);
+  }
+  
+  /** pop takes out the top value out of list and returns it */
+  public T pop() {
+      T tempValue = list.getValueAt(0);
+      list.deleteAt(0);
+      return tempValue;
+  }
+  
+  /** peek gets the top value of list and returns it */
+  public T peek() {
+      return list.getValueAt(0);
+  }
+  
+  /** isEmpty checks to see if the list has values */
+  public boolean isEmpty() {
+      if (list.size() == 0) {
+          return true;
+      }
+      else {
+          return false;
+      }
+  }
+}
