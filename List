@@ -1,0 +1,118 @@
+/** Linked List implementation of our List abstract data type */
+public class List<T> {
+  // put all fields from ListAsLinkedList class here
+  /** head is the first node */
+  private Node head;
+  
+  /** tail is the second node */
+  private Node tail;
+  
+  /** variable to count elements in list */
+  private int count;
+  
+  // put all methods from ListAsLinkedList class here
+  /** constructor that sets head and tail to null */
+  public List() {
+    head = tail = null;
+    count = 0;
+  }
+  
+  /** Adds the given value to the end of the list */
+  public void append(T value) {
+    /** put data in new node */
+    Node temp = new Node(value);
+    if (tail == null) {
+      tail = temp; 
+      head = temp;
+    }
+    else {
+      tail.next = temp;
+      tail = temp;
+    }
+    count++;
+  }
+  
+  /** Adds the given value to the beginning of the list */
+  public void prepend(T value) {
+      Node temp = new Node(value);
+      if (head == null) {
+          tail = temp;
+          head = temp;
+      }
+      else {
+          temp.next = head;
+          head = temp;
+      }
+      count++;
+  }
+  
+  /** Deletes the container at the given position (a container holds a value) */
+  public void deleteAt(int position) { 
+      if (position >= 0 && position < count) {
+          if (position == 0) {
+              head = head.next;
+              if (head == null) {
+                  tail = null;
+              }
+              count--;
+              return;
+          }    
+          Node current = head;
+          for (int i = 0; i < position - 1; i++) {
+              current = current.next;
+            }
+          current.next = current.next.next;
+          if (current.next == null) {
+              tail = current;
+          }
+          count--;
+      }
+  }
+  
+  /** Returns the number of values currently in our list */
+  public int size() {
+      return count;
+  }
+  
+  /** Retrieves the value at the given position */
+  public T getValueAt(int position) {
+      Node<T> temp = head;
+      for (int i = 0; i < position; i++) {  
+          temp = temp.next;
+      }
+      return temp.data;
+  }
+  
+  /** Searches for the FIRST occurence of a given value in our list.
+    * If found, it returns the position of that value.
+    * If not found, it returns -1 */
+  public int positionOf(T value) {
+      int position = 0;
+      for (Node temp = head; temp != null; temp = temp.next) {
+          if (temp.data == value) {
+              return position;   
+          }
+          position++;
+      }
+      
+      /** not found */
+      return -1;
+  
+  }
+}
+
+/** A linked list node for our linked list */
+class Node<T> {
+  // put all fields from Node class here
+  /**  data in the node */
+  public T data;
+  
+  /** next node linking */
+  public Node next;
+  
+  // put all methods from Node class here
+  public Node(T data) {
+    this.data = data;
+    this.next = null;
+  }
+} 
