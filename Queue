@@ -1,0 +1,38 @@
+/** Queue abstract data type */
+public class Queue<T> {
+  /** List objects to hold our queue items.
+      Use List operations to implement the methods below */
+  private List<T> list;
+  
+  public Queue() {
+    // instantiate list here
+    list = new List<T>();
+  }
+  
+  /** enqueue adds in a value to the list */
+  public void enqueue(T value) {
+      list.append(value);
+  }
+  
+  /** dequeue takes out the front value out of list and returns it */
+  public T dequeue() {
+      T tempValue = list.getValueAt(0);
+      list.deleteAt(0);
+      return tempValue;
+  }
+  
+  /** front gets the front value of list and returns it */
+  public T front() {
+      return list.getValueAt(0);
+  }
+  
+  /** isEmpty checks to see if the list has values */
+  public boolean isEmpty() {
+      if (list.size() == 0) {
+          return true;
+      }
+      else {
+          return false;
+      }
+  }
+}
