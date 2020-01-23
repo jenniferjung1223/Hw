@@ -1,0 +1,221 @@
+/**
+ * Name: Jennifer Jung
+ * Date: 1/22/20
+ * Description: This program takes an infix expression from the user, convert it into postfix form, then evaluates it to find an answer to the expression.
+ */
+
+import java.util.Scanner;
+public class Main<T>{
+  static char leftPar = '(';
+  static char power = '^';
+  static char multi = '*';
+  static char div = '/';
+  static char add = '+';
+  static char sub = '-';
+  static char rightPar = ')';
+  
+  static Queue<Character> postfixQueue;
+  static Stack<Character> operatorStack;
+  static Queue<Character> infixQueue;
+  static Stack<Character> evalStack;
+  
+  public static int getInfixPriority(char c) {
+      if (c == leftPar) {
+          return 4;
+      }
+      
+      if (c == rightPar) {
+          return 4;
+      }
+      
+      else if (c == power) {
+          return 3;
+      }
+      
+      else if (c == multi) {
+          return 2;
+      }
+      
+      else if (c == div) {
+          return 2;
+      }
+      
+      else if (c == add) {
+          return 1;
+      }
+        
+      else if (c == sub) {
+          return 1;
+      }
+      
+      else {
+          return 0;
+      }
+  }
+  
+  public static int getStackPriority(char c) {
+      if (c == power) {
+          return 2;
+      }
+      
+      else if (c == multi) {
+          return 2;
+      }
+      
+      else if (c == div) {
+          return 2;
+      }
+      
+      else if (c == add) {
+          return 1;
+      }
+        
+      else if (c == sub) {
+          return 1;
+      }
+      
+      else {
+          return 0;
+      }
+  }
+  
+  public static boolean isOperand(char c) {
+      if (c <= 9 && c >= 0) {
+        return true;
+      }
+      else {
+          return false;
+      }
+  }
+  
+  public static int eval(char operator, int a, int b) {
+      if (operator == power) {
+          return a ^ b;
+      }
+      
+      else if (operator == multi) {
+          return a * b;
+      }
+      
+      else if (operator == div) {
+          return a / b;
+      }
+      
+      else if (operator == add) {
+          return a + b;
+      }
+        
+      else if (operator == sub) {
+          return a - b;
+      }
+      
+      else {
+          return -1;
+      }
+  }
+  
+  public static String infixtoPostfix(String infixString) {
+      // setting everything up
+      Queue<Character>postfixQueue = new Queue<Character>();
+      Stack<Character>operatorStack = new Stack<Character>();
+      Queue<Character>infixQueue = new Queue<Character>();
+      
+      // enqueue each character into infixQueue
+      for (int i = 0; i < infixString.length(); i++) {
+          infixQueue.enqueue(infixString.charAt(i));
+      }
+      
+      // process the infixQueue
+      while (!infixQueue.isEmpty()){
+          // grab the next character
+          char token = infixQueue.dequeue();
+          // process operands (i.e. digits)
+          if (isOperand(token)) {
+              postfixQueue.enqueue(token);
+          }
+          // process parenthesis
+          else if (token == rightPar) {
+                char operator = operatorStack.pop();
+                while (operator != leftPar) {
+                    postfixQueue.enqueue(operator);
+                    operatorStack.pop();
+                }
+          }
+          // process operators (other than right parenthesis)
+          else if (!operatorStack.isEmpty()) {
+                  // handle operators already on the operatorStack
+                  char operator = operatorStack.peek();
+                  // move operators with high priority into our postfixQueue
+                  while (getStackPriority(operator) >= getInfixPriority(token)) {
+                      operator = operatorStack.pop();
+                      postfixQueue.enqueue(operator);
+                      if (!operatorStack.isEmpty()) {
+                          operatorStack.peek();
+                      }
+                      else {
+                          break;
+                      }
+                  }
+          }
+          operatorStack.push(token);
+      }
+      
+      while (!operatorStack.isEmpty()) {
+          char operator = operatorStack.pop();
+          postfixQueue.enqueue(operator);
+      }
+      
+      String postfix = "";
+      while (!postfixQueue.isEmpty()) {
+           postfix = postfix + postfixQueue.dequeue();
+      }
+      return postfix;
+  }
+  
+  public static int evalPostfix(String postfixString) {
+      for (int i = 0; i < postfixString.length(); i++) {
+          postfixQueue.enqueue(postfixString.charAt(i));
+      }
+      Stack<Integer> evalStack = new Stack<Integer>();
+      int finalResult = 0;
+      // process the postfixQueue
+      while (!postfixQueue.isEmpty()) {
+          char token = postfixQueue.dequeue();
+          // if token is a digit, throw it on the evalStack
+          if (isOperand(token)) {
+              evalStack.push(token); /** THIS IS WHERE MY ERROR IS */
+          }
+          
+          // otherwise, evaluate our sub-expression and push the answer onto the evalStack
+          else {
+              int a = evalStack.pop();
+              int b = evalStack.pop();
+              int answer = eval(token, b, a);
+              evalStack.push(answer);
+          }
+      }
+      // if our evalStack is not empty after processing everything, then return the final answer stored at the top
+      if (!evalStack.isEmpty()) {
+          finalResult = evalStack.pop();
+          return finalResult;
+      }
+      else {
+          System.out.println("error");
+      }
+  }
+  
+  /** entry point */
+  public static void main(String[] args) {
+    Scanner input = new Scanner(System.in);
+    
+    System.out.print("Enter infix expression: ");
+    String expression = input.nextLine();
+    System.out.println("Summary");
+    System.out.println("-------");
+    System.out.println("    Infix: " + expression);
+    System.out.println("Postfix: " + infixtoPostfix(expression));
+    System.out.println(" Result: " + evalPostfix(infixtoPostfix(expression)));
+  }
+}
+  
+  
